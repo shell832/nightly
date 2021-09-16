@@ -144,7 +144,7 @@ static char *follow_link(char *link)
 	char *name, *resolved, *end;
 	int n;
 
-	name = __getname();
+	name = kmalloc(PATH_MAX, GFP_KERNEL);
 	if (!name) {
 		n = -ENOMEM;
 		goto out_free;
@@ -173,12 +173,11 @@ static char *follow_link(char *link)
 		goto out_free;
 	}
 
-	__putname(name);
-	kfree(link);
+	kfree(name);
 	return resolved;
 
  out_free:
-	__putname(name);
+	kfree(name);
 	return ERR_PTR(n);
 }
 
@@ -317,7 +316,7 @@ retry:
 	if (mode & FMODE_WRITE)
 		r = w = 1;
 
-	name = dentry_name(d_real(file->f_path.dentry, file->f_inode));
+	name = dentry_name(file_dentry(file));
 	if (name == NULL)
 		return -ENOMEM;
 
@@ -382,6 +381,7 @@ static int hostfs_fsync(struct file *file, loff_t start, loff_t end,
 static const struct file_operations hostfs_file_fops = {
 	.llseek		= generic_file_llseek,
 	.splice_read	= generic_file_splice_read,
+	.splice_write	= iter_file_splice_write,
 	.read_iter	= generic_file_read_iter,
 	.write_iter	= generic_file_write_iter,
 	.mmap		= generic_file_mmap,
@@ -712,7 +712,6 @@ static int hostfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
 	if (name == NULL)
 		goto out_put;
 
-	init_special_inode(inode, mode, dev);
 	err = do_mknod(name, mode, MAJOR(dev), MINOR(dev));
 	if (err)
 		goto out_free;

@@ -90,13 +90,11 @@ static ssize_t do_id_store(struct device_driver *drv, const char *buf,
 				list_add(&dax_id->list, &dax_drv->ids);
 			} else
 				rc = -ENOMEM;
-		} else
-			/* nothing to remove */;
+		}
 	} else if (action == ID_REMOVE) {
 		list_del(&dax_id->list);
 		kfree(dax_id);
-	} else
-		/* dax_id already added */;
+	}
 	mutex_unlock(&dax_bus_lock);
 
 	if (rc < 0)
@@ -174,15 +172,13 @@ static int dax_bus_probe(struct device *dev)
 	return 0;
 }
 
-static int dax_bus_remove(struct device *dev)
+static void dax_bus_remove(struct device *dev)
 {
 	struct dax_device_driver *dax_drv = to_dax_drv(dev->driver);
 	struct dev_dax *dev_dax = to_dev_dax(dev);
 
 	if (dax_drv->remove)
 		dax_drv->remove(dev_dax);
-
-	return 0;
 }
 
 static struct bus_type dax_bus_type = {

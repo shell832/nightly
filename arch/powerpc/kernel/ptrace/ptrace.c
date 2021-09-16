@@ -59,7 +59,6 @@ long arch_ptrace(struct task_struct *child, long request,
 		if ((addr & (sizeof(long) - 1)) || !child->thread.regs)
 			break;
 
-		CHECK_FULL_REGS(child->thread.regs);
 		if (index < PT_FPR0)
 			ret = ptrace_get_reg(child, (int) index, &tmp);
 		else
@@ -81,7 +80,6 @@ long arch_ptrace(struct task_struct *child, long request,
 		if ((addr & (sizeof(long) - 1)) || !child->thread.regs)
 			break;
 
-		CHECK_FULL_REGS(child->thread.regs);
 		if (index < PT_FPR0)
 			ret = ptrace_put_reg(child, index, data);
 		else
@@ -354,8 +352,6 @@ void __init pt_regs_check(void)
 		     offsetof(struct user_pt_regs, nip));
 	BUILD_BUG_ON(offsetof(struct pt_regs, msr) !=
 		     offsetof(struct user_pt_regs, msr));
-	BUILD_BUG_ON(offsetof(struct pt_regs, msr) !=
-		     offsetof(struct user_pt_regs, msr));
 	BUILD_BUG_ON(offsetof(struct pt_regs, orig_gpr3) !=
 		     offsetof(struct user_pt_regs, orig_gpr3));
 	BUILD_BUG_ON(offsetof(struct pt_regs, ctr) !=
@@ -377,7 +373,11 @@ void __init pt_regs_check(void)
 		     offsetof(struct user_pt_regs, trap));
 	BUILD_BUG_ON(offsetof(struct pt_regs, dar) !=
 		     offsetof(struct user_pt_regs, dar));
+	BUILD_BUG_ON(offsetof(struct pt_regs, dear) !=
+		     offsetof(struct user_pt_regs, dar));
 	BUILD_BUG_ON(offsetof(struct pt_regs, dsisr) !=
+		     offsetof(struct user_pt_regs, dsisr));
+	BUILD_BUG_ON(offsetof(struct pt_regs, esr) !=
 		     offsetof(struct user_pt_regs, dsisr));
 	BUILD_BUG_ON(offsetof(struct pt_regs, result) !=
 		     offsetof(struct user_pt_regs, result));

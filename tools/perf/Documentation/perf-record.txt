@@ -9,7 +9,7 @@ SYNOPSIS
 --------
 [verse]
 'perf record' [-e <EVENT> | --event=EVENT] [-a] <command>
-'perf record' [-e <EVENT> | --event=EVENT] [-a] -- <command> [<options>]
+'perf record' [-e <EVENT> | --event=EVENT] [-a] \-- <command> [<options>]
 
 DESCRIPTION
 -----------
@@ -695,6 +695,7 @@ measurements:
  wait -n ${perf_pid}
  exit $?
 
+include::intel-hybrid.txt[]
 
 SEE ALSO
 --------

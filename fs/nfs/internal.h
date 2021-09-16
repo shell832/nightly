@@ -67,6 +67,7 @@ struct nfs_client_initdata {
 	int proto;
 	u32 minorversion;
 	unsigned int nconnect;
+	unsigned int max_connect;
 	struct net *net;
 	const struct rpc_timeout *timeparms;
 	const struct cred *cred;
@@ -96,6 +97,7 @@ struct nfs_fs_context {
 	char			*fscache_uniq;
 	unsigned short		protofamily;
 	unsigned short		mountfamily;
+	bool			has_sec_mnt_opts;
 
 	struct {
 		union {
@@ -120,6 +122,7 @@ struct nfs_fs_context {
 		int			port;
 		unsigned short		protocol;
 		unsigned short		nconnect;
+		unsigned short		max_connect;
 		unsigned short		export_path_len;
 	} nfs_server;
 
@@ -180,7 +183,7 @@ struct nfs_mount_request {
 	struct net		*net;
 };
 
-extern int nfs_mount(struct nfs_mount_request *info);
+extern int nfs_mount(struct nfs_mount_request *info, int timeo, int retrans);
 extern void nfs_umount(const struct nfs_mount_request *info);
 
 /* client.c */
